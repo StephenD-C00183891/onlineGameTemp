@@ -8,6 +8,11 @@ public class Player : MonoBehaviour {
     public KeyCode up, down, left, right;
     public bool remote;
 
+    public float max = 1.0f;
+    public float min = -1.0f;
+
+    static float t = 0.0f;
+
     void Start (){
         rb = GetComponent<Rigidbody2D>();
     }
@@ -29,9 +34,26 @@ public class Player : MonoBehaviour {
             rb.AddForce(new Vector2(5, 0));
         }
     }
-    public void MoveByPosition(Vector2 pos)
+    public void MoveByPosition(Vector2 pos, bool recieved)
     {
-        rb.position = pos;
+        if (recieved == true)
+        {
+            rb.position = pos;
+        }
+        else if (recieved == false) 
+        {
+            rb.position = new Vector2(Mathf.Lerp(min, max, t), 0);
+
+            t += 0.05f * Time.deltaTime;
+
+            if(t > 1.0f)
+            {
+                float temp = max;
+                max = min;
+                min = temp;
+                t = 0.0f;
+            }
+        }
     }
     public Vector2 GetPosition()
     {

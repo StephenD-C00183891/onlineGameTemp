@@ -15,6 +15,10 @@ public class Game : MonoBehaviour {
     public bool localNet = false;
     public bool stateBased = false;
 
+    float lastPacketSentTimeRed = 0;
+    float lastPacketSentTimeBlue = 0;
+    float currentTime = 0;
+
     void Start ()
     {
         network = GetComponent<Net>();
@@ -23,6 +27,7 @@ public class Game : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         string message = Receive();
+        currentTime = Time.time * 1000;
         //fakeNetwork.ProcessMessages();
 
         if (!stateBased)
@@ -70,7 +75,16 @@ public class Game : MonoBehaviour {
 
                 string combined = positionX + "," + positionY;
                 //fakeNetwork.Send(combined);
-                network.Send(combined);
+                
+                if (currentTime - lastPacketSentTimeRed > 1000 / 30 )
+                {
+                    network.Send(combined);
+                    lastPacketSentTimeRed = currentTime;
+                }
+                else
+                {
+                    redPlayer.MoveByPosition(new Vector2(0, 0), false);
+                }
 
                 string[] splitMessage;
                 splitMessage = message.Split(',');
@@ -80,7 +94,7 @@ public class Game : MonoBehaviour {
                 newPosition.x = float.Parse(splitMessage[0]);
                 newPosition.y = float.Parse(splitMessage[1]);
 
-                bluePlayer.MoveByPosition(newPosition);
+                bluePlayer.MoveByPosition(newPosition, true);
             }
             //if you're the blue player
             else
@@ -92,7 +106,17 @@ public class Game : MonoBehaviour {
 
                 string combined = positionX + "," + positionY;
                 //fakeNetwork.Send(combined);
-                network.Send(combined);
+
+                if (currentTime - lastPacketSentTimeBlue > 1000 / 30)
+                {
+                    network.Send(combined);
+                    lastPacketSentTimeBlue = currentTime;
+                }
+                else
+                {
+                    bluePlayer.MoveByPosition(new Vector2(0, 0), false);
+                }
+                // network.Send(combined);
 
                 string[] splitMessage;
                 splitMessage = message.Split(',');
@@ -101,7 +125,7 @@ public class Game : MonoBehaviour {
                 newPosition.x = float.Parse(splitMessage[0]);
                 newPosition.y = float.Parse(splitMessage[1]);
 
-                redPlayer.MoveByPosition(newPosition);
+                redPlayer.MoveByPosition(newPosition, true);
             }
         }
     }
