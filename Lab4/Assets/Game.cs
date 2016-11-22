@@ -140,5 +140,4 @@ public class Game : MonoBehaviour {
         string message = network.Receive();
         return message;
     }
-
 }

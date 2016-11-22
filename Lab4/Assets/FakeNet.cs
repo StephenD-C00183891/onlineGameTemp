@@ -8,6 +8,8 @@ public class FakeNet : MonoBehaviour {
     float jitter;
     float packetLoss;
     float currentTime;
+    float lastPacketSendTime;
+    int fps;
 
     Net network;
     List<Message> packets;
@@ -16,9 +18,10 @@ public class FakeNet : MonoBehaviour {
     {
         network = GetComponent<Net>();
         packets = new List<Message>();
-        latency = 400;
-        jitter = 100;
-        packetLoss = 40;
+        latency = 0;
+        jitter = 0;
+        fps = 30;
+        packetLoss = 0;
     }
     public void Send(string message)
     {
@@ -38,9 +41,16 @@ public class FakeNet : MonoBehaviour {
         {
             if (packets[i].GetTime() < currentTime)
             {
-                int num = Random.Range(0, 101);
-                if (num > packetLoss)
-                    network.Send(packets[i].GetMessage());
+                if (currentTime - lastPacketSendTime > 1000 / fps)
+                {
+                    int num = Random.Range(0, 101);
+
+                    if (num > packetLoss)
+                    {
+                        network.Send(packets[i].GetMessage());
+                        lastPacketSendTime = currentTime;
+                    }
+                }
                 packets.RemoveAt(i);
             }
         }
