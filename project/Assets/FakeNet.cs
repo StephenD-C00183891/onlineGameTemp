@@ -10,12 +10,12 @@ public class FakeNet : MonoBehaviour
     float packetLoss;
     float currentTime;
 
-    Networking network;
+    public Networking network;
+
     List<Message> packets;
 
     void Start()
     {
-        network = GetComponent<Networking>();
         packets = new List<Message>();
         latency = 400;
         jitter = 100;

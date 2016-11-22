@@ -10,6 +10,7 @@ public class Game : MonoBehaviour
 {
     public Player player;
     public Player player2;
+
     public FakeNet fakeNet;
 
     public bool inputMsg = false;
@@ -22,9 +23,7 @@ public class Game : MonoBehaviour
 
     void Update()
     {
-
         fakeNet.ProcessMessages();
-
         if (Input.GetKey("r"))
         {
             inputMsg = !inputMsg;

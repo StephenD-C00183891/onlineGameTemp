@@ -12,11 +12,11 @@ public class Networking : MonoBehaviour
     public GameObject player;
     public GameObject player2;
 
-    string ip = "127.0.0.1";
-    int port = 7000;
+    string ip;
+    int port;
 
-    string remote_ip = "127.0.0.1";
-    int remote_port = 8000;
+    string remote_ip;
+    int remote_port;
 
     int socketId;
     int remote_socketID;
@@ -122,12 +122,12 @@ public class Networking : MonoBehaviour
                 {
                     Debug.Log("Recieved Vector " + dir);
                     updatedPos = StringToVector2(dir);
-                    player.GetComponent<Player>().setPosition(updatedPos);
+                    player2.GetComponent<Player>().setPosition(updatedPos);
                 }
                 else if (game.GetComponent<Game>().inputMsg == true && dir != "True" && dir != "False")
                 {
                     Debug.Log("Recieved Direction " + dir);
-                    player.GetComponent<Player>().RemoteMove(dir);
+                    player2.GetComponent<Player>().RemoteMove(dir);
                 }
              
                 break;

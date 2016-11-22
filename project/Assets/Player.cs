@@ -12,11 +12,6 @@ public class Player : MonoBehaviour
     Rigidbody2D rb2;
    
     public Vector2 playerPos;
-//    public Vector2 player2Pos;
-
-   // private Transform player2Pos;
-   
-//bacio.position = Vector3(0,0,0);
 
 
     void Start ()
