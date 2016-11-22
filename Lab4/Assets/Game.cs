@@ -27,82 +27,17 @@ public class Game : MonoBehaviour {
 
         if (!stateBased)
         {
-            //if you're the red player
             if (redPlayer.remote == false)
-            {
-                if (message.Contains("W"))
-                    bluePlayer.Move(KeyCode.W);
-                if (message.Contains("S"))
-                    bluePlayer.Move(KeyCode.S);
-                if (message.Contains("A"))
-                    bluePlayer.Move(KeyCode.A);
-                if (message.Contains("D"))
-                    bluePlayer.Move(KeyCode.D);
-                    //bluePlayer.Move((KeyCode)System.Enum.Parse(typeof(KeyCode), message));
-                HandleInput(redPlayer);
-            }
-            //if you're the blue player
+                ProcessInput(bluePlayer, message);
             else
-            {
-                //if (message != "")
-                //    redPlayer.Move((KeyCode)System.Enum.Parse(typeof(KeyCode), message));
-                if (message.Contains("W"))
-                    redPlayer.Move(KeyCode.W);
-                if (message.Contains("S"))
-                    redPlayer.Move(KeyCode.S);
-                if (message.Contains("A"))
-                    redPlayer.Move(KeyCode.A);
-                if (message.Contains("D"))
-                    redPlayer.Move(KeyCode.D);
-
-                HandleInput(bluePlayer);
-            }
+                ProcessInput(redPlayer, message);
         }
         else
         {
-            //if you're the red player
             if (redPlayer.remote == false)
-            {
-                HandleInput(redPlayer);
-                
-                string positionX = redPlayer.GetPosition().x.ToString();
-                string positionY = redPlayer.GetPosition().y.ToString();
-
-                string combined = positionX + "," + positionY;
-                //fakeNetwork.Send(combined);
-                network.Send(combined);
-
-                string[] splitMessage;
-                splitMessage = message.Split(',');
-
-                Vector2 newPosition = new Vector2();
-
-                newPosition.x = float.Parse(splitMessage[0]);
-                newPosition.y = float.Parse(splitMessage[1]);
-
-                bluePlayer.MoveByPosition(newPosition);
-            }
-            //if you're the blue player
+                ProcessGame(redPlayer, bluePlayer, message);
             else
-            {
-                HandleInput(bluePlayer);
-
-                string positionX = bluePlayer.GetPosition().x.ToString();
-                string positionY = bluePlayer.GetPosition().y.ToString();
-
-                string combined = positionX + "," + positionY;
-                //fakeNetwork.Send(combined);
-                network.Send(combined);
-
-                string[] splitMessage;
-                splitMessage = message.Split(',');
-
-                Vector2 newPosition = new Vector2();
-                newPosition.x = float.Parse(splitMessage[0]);
-                newPosition.y = float.Parse(splitMessage[1]);
-
-                redPlayer.MoveByPosition(newPosition);
-            }
+                ProcessGame(bluePlayer, redPlayer, message);
         }
     }
     public void SetPlayer1()
@@ -150,5 +85,35 @@ public class Game : MonoBehaviour {
     {
         string message = network.Receive();
         return message;
+    }
+    void ProcessGame(Player firstPlayer, Player secondPlayer, string message)
+    {
+        HandleInput(firstPlayer);
+
+        string positionX = firstPlayer.GetPosition().x.ToString();
+        string positionY = firstPlayer.GetPosition().y.ToString();
+
+        string combined = positionX + "," + positionY;
+        //fakeNetwork.Send(combined);
+        network.Send(combined);
+
+        string[] splitMessage;
+        splitMessage = message.Split(',');
+
+        float newPosX = System.Single.Parse(splitMessage[0]);
+        float newPosY = System.Single.Parse(splitMessage[1]);
+
+        secondPlayer.MoveByPosition(new Vector2(newPosX, newPosY));
+    }
+    void ProcessInput(Player player, string message)
+    {
+        if (message.Contains("W"))
+            player.Move(KeyCode.W);
+        if (message.Contains("S"))
+            player.Move(KeyCode.S);
+        if (message.Contains("A"))
+            player.Move(KeyCode.A);
+        if (message.Contains("D"))
+            player.Move(KeyCode.D);
     }
 }
