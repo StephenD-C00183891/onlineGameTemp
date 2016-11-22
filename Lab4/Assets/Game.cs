@@ -17,6 +17,7 @@ public class Game : MonoBehaviour {
 
     float lastPacketSentTime = 0;
     float currentTime = 0;
+    const float FPS = (1000.0f / 10.0f) / 1000.0f;
 
     void Start ()
     {
@@ -25,9 +26,10 @@ public class Game : MonoBehaviour {
     }
     // Update is called once per frame
     void Update() {
+
         string message = Receive();
-        currentTime = Time.time * 1000;
-        //fakeNetwork.ProcessMessages();
+
+        currentTime = Time.time;
 
         if (!stateBased)
         {
@@ -56,33 +58,32 @@ public class Game : MonoBehaviour {
     }
     void HandleInput(Player player)
     {
-        string message = "";
+        string msg = "";
 
         if (Input.GetKey(KeyCode.W))
         {
             player.Move(KeyCode.W);
-            message += "W";
+            msg += "W";
         }
         if (Input.GetKey(KeyCode.S))
         {
             player.Move(KeyCode.S);
-            message += "S";
+            msg += "S";
         }
         if (Input.GetKey(KeyCode.A))
         {
             player.Move(KeyCode.A);
-            message += "A";
+            msg += "A";
         }
         if (Input.GetKey(KeyCode.D))
         {
             player.Move(KeyCode.D);
-            message += "D";
+            msg += "D";
         }
 
         if (!stateBased)
         {
-            //fakeNetwork.Send(message);
-            network.Send(message);
+            network.Send(msg);
         }
     }
     string Receive()
@@ -98,21 +99,25 @@ public class Game : MonoBehaviour {
         string positionY = firstPlayer.GetPosition().y.ToString();
 
         string combined = positionX + "," + positionY;
-        if (currentTime - lastPacketSentTime > (1000.0f / 10.0f))
+        if (currentTime - lastPacketSentTime > FPS)
         {
             network.Send(combined);
             lastPacketSentTime = currentTime;
         }
+        //network.Send(combined);
+        if (message != "")
+        {
+            string[] splitMessage;
+            splitMessage = message.Split(',');
 
-        string[] splitMessage;
-        splitMessage = message.Split(',');
+            float newPosX = float.Parse(splitMessage[0]);
+            float newPosY = float.Parse(splitMessage[1]);
 
-        float newPosX = System.Single.Parse(splitMessage[0]);
-        float newPosY = System.Single.Parse(splitMessage[1]);
+            //secondPlayer.MoveBy(new Vector2(newPosX, newPosY));
+            secondPlayer.MoveByPosition(new Vector2(newPosX, newPosY));
+        }
+        secondPlayer.ManualUpdate(FPS);
 
-        //secondPlayer.MoveBy(new Vector2(newPosX, newPosY));
-        secondPlayer.MoveByPosition(new Vector2(newPosX, newPosY));
-        secondPlayer.ManualUpdate();
     }
     void ProcessInput(Player player, string message)
     {
