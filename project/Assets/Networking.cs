@@ -40,17 +40,16 @@ public class Networking : MonoBehaviour
         updatedPos = new Vector2();
     }
 
-    public void Setup()
+    public void SetupA()
     {
-        ip = "127.0.0.1";
+        ip = "149.153.106.154";
         port = 8080;
 
-       // remote_ip = "149.153.106.155";
-        remote_ip = "127.0.0.1";
+        remote_ip = "149.153.106.155";
         remote_port = 8000;
 
-       // Debug.Log("remote.port " + remote_port);
-      //  Debug.Log("port " + port);
+        // Debug.Log("remote.port " + remote_port);
+        // Debug.Log("port " + port);
 
         HostTopology topology = new HostTopology(config, 10);
         socketId = NetworkTransport.AddHost(topology, port);
@@ -59,14 +58,14 @@ public class Networking : MonoBehaviour
 
     public void SetupB()
     {
-        ip = "127.0.0.1";
+        ip = "149.153.106.155";
         port = 8000;
 
-       // remote_ip = "127.0.0.1";
+        remote_ip = "149.153.106.154";
         remote_port = 8080;
 
-       // Debug.Log("remote.port " + remote_port);
-       // Debug.Log("port " + port);
+        // Debug.Log("remote.port " + remote_port);
+        // Debug.Log("port " + port);
 
         HostTopology topology = new HostTopology(config, 10);
         remote_socketID = NetworkTransport.AddHost(topology, port);
@@ -162,15 +161,14 @@ public class Networking : MonoBehaviour
 
     public void Send(string inputMsg)
     {
-    //    Debug.Log("seinding");
-            byte error = 0;
-            byte[] buffer = new byte[100];
+        byte error = 0;
+        byte[] buffer = new byte[100];
 
-            Stream stream = new MemoryStream(buffer);
-            BinaryFormatter formatter = new BinaryFormatter();
-            formatter.Serialize(stream, inputMsg);
+        Stream stream = new MemoryStream(buffer);
+        BinaryFormatter formatter = new BinaryFormatter();
+        formatter.Serialize(stream, inputMsg);
 
-            NetworkTransport.Send(socketId, connectionId, channelId, buffer, (int)stream.Position, out error);
+        NetworkTransport.Send(socketId, connectionId, channelId, buffer, (int)stream.Position, out error);
 
     }
 }

@@ -1,65 +1,55 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System;
 using System.Collections.Generic;
 
+public class FakeNet : MonoBehaviour
+{
 
-public class FakeNet : MonoBehaviour {
+    float latency;
+    float jitter;
+    float packetLoss;
+    float currentTime;
 
-    public int latency = 0;
-    public int jitter = 0;
-    public int packetLoss = 0;
+    Networking network;
+    List<Message> packets;
 
-    public GameObject netObj;
-    
-    public float currentTime;
+    void Start()
+    {
+        network = GetComponent<Networking>();
+        packets = new List<Message>();
+        latency = 400;
+        jitter = 100;
+        packetLoss = 40;
+    }
+    public void Send(string message)
+    {
+        Message m = new Message();
+        float currentTime = Time.time * 1000;
+        currentTime += latency + Random.Range(0, jitter);
 
-   // int packetLossNo = UnityEngine.Random.Range
-  //  Random rnd = new Random();
+        m.SetTime(currentTime);
+        m.SetMessage(message);
 
-    List<Message> messages;
-
-	// Use this for initialization
-	void Start () {
-        messages = new List<Message>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-        currentTime += Time.deltaTime * 1000;
-
-       // ProcessMessage();
-	}
-
-    public void ProcessMessage()
-    { 
-        for (int i = 0; i < messages.Count; i++)
+        packets.Add(m);
+    }
+    public void ProcessMessages()
+    {
+        currentTime = Time.time * 1000;
+        for (int i = 0; i < packets.Count; i++)
         {
-            //Packet Loss
-            packetLoss = UnityEngine.Random.Range(1, 10);
-            //Debug.Log(messages[i]);
-            if (currentTime >= messages[i].timeStamp && packetLoss > 3)
+            if (packets[i].GetTime() < currentTime)
             {
-
-                netObj.GetComponent<Networking>().Send(messages[i].charArray);
-                messages.RemoveAt(i);
-               // Debug.Log(messages.Count);
-            }
-            else
-            {
-                Debug.Log("Packet Lost");
+                int num = Random.Range(0, 101);
+                if (num > packetLoss)
+                    network.Send(packets[i].GetMessage());
+                packets.RemoveAt(i);
             }
         }
     }
 
-    public void Send(string inputMsg)
+    // Update is called once per frame
+    void Update()
     {
-        //Comment out for Latency, Leave in for Jitter.
-        if (jitter > 0)
-        {
-            latency = UnityEngine.Random.Range(500, jitter);
-        }
-        float delayTime = currentTime + latency;
-        messages.Add(new Message(inputMsg, delayTime));
+
     }
 }

@@ -1,17 +1,31 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEngine.UI;
 
-public class Message {
+public class Message
+{
 
+    string content;
+    float sendTimestamp;
 
-    //public char charArray[];
-    public string charArray;
-    public float timeStamp;
-
-    public Message(string input, float time)
+    public Message()
     {
-        charArray = input;
-        timeStamp = time;
+
     }
+    public void SetMessage(string message)
+    {
+        content = message;
+    }
+    public string GetMessage()
+    {
+        return content;
+    }
+    public void SetTime(float time)
+    {
+        sendTimestamp = time;
+    }
+    public float GetTime()
+    {
+        return sendTimestamp;
+    }
+
 }
