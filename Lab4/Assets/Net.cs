@@ -25,8 +25,6 @@ public class Net : MonoBehaviour {
 
     // Use this for initialization
     public void Start () {
-        //Debug.Log("Me " + myIP + ":" + myPort);
-        //Debug.Log("Remote " + remoteIP + ":" + remotePort);
         game = GetComponent<Game>();
         NetworkTransport.Init();
         config = new ConnectionConfig();
@@ -37,12 +35,19 @@ public class Net : MonoBehaviour {
     public void SetupA()
     {
         game.SetPlayer1();
-        //myIP = "127.0.0.1";
-        myIP = "149.153.106.154";
-        myPort = 8001;
 
-        //remoteIP = "127.0.0.1";
-        remoteIP = "149.153.106.155";
+        if (game.localNet)
+        {
+            myIP = "127.0.0.1";
+            remoteIP = "127.0.0.1";
+        }
+        else
+        {
+            myIP = "149.153.106.154";
+            remoteIP = "149.153.106.155";
+        }
+
+        myPort = 8001;        
         remotePort = 8000;
 
         HostTopology topology = new HostTopology(config, maxConnections);
@@ -51,12 +56,18 @@ public class Net : MonoBehaviour {
     public void SetupB()
     {
         game.SetPlayer2();
-        //myIP = "127.0.0.1";
-        myIP = "149.153.106.155";
+        if (game.localNet)
+        {
+            myIP = "127.0.0.1";
+            remoteIP = "127.0.0.1";
+        }
+        else
+        {
+            myIP = "149.153.106.155";
+            remoteIP = "149.153.106.154";
+        }
+        
         myPort = 8000;
-
-        //remoteIP = "127.0.0.1";
-        remoteIP = "149.153.106.154";
         remotePort = 8001;
 
         HostTopology topology = new HostTopology(config, maxConnections);

@@ -11,17 +11,19 @@ public class Game : MonoBehaviour {
     Message msg;
 
     int id;
+
+    public bool localNet = false;
     public bool stateBased = false;
 
     void Start ()
     {
         network = GetComponent<Net>();
-        fakeNetwork = GetComponent<FakeNet>();
+        //fakeNetwork = GetComponent<FakeNet>();
     }
     // Update is called once per frame
     void Update() {
         string message = Receive();
-        fakeNetwork.ProcessMessages();
+        //fakeNetwork.ProcessMessages();
 
         if (!stateBased)
         {
@@ -67,13 +69,18 @@ public class Game : MonoBehaviour {
                 string positionY = redPlayer.GetPosition().y.ToString();
 
                 string combined = positionX + "," + positionY;
-                fakeNetwork.Send(combined);
-                //network.Send(combined);
+                //fakeNetwork.Send(combined);
+                network.Send(combined);
 
                 string[] splitMessage;
                 splitMessage = message.Split(',');
-                
-                bluePlayer.MoveByPosition(new Vector2( float.Parse(splitMessage[0]), float.Parse(splitMessage[1]) ));
+
+                Vector2 newPosition = new Vector2();
+
+                newPosition.x = float.Parse(splitMessage[0]);
+                newPosition.y = float.Parse(splitMessage[1]);
+
+                bluePlayer.MoveByPosition(newPosition);
             }
             //if you're the blue player
             else
@@ -84,13 +91,17 @@ public class Game : MonoBehaviour {
                 string positionY = bluePlayer.GetPosition().y.ToString();
 
                 string combined = positionX + "," + positionY;
-                fakeNetwork.Send(combined);
-                //network.Send(combined);
+                //fakeNetwork.Send(combined);
+                network.Send(combined);
 
                 string[] splitMessage;
                 splitMessage = message.Split(',');
 
-                redPlayer.MoveByPosition(new Vector2(float.Parse(splitMessage[0]), float.Parse(splitMessage[1]) ) );
+                Vector2 newPosition = new Vector2();
+                newPosition.x = float.Parse(splitMessage[0]);
+                newPosition.y = float.Parse(splitMessage[1]);
+
+                redPlayer.MoveByPosition(newPosition);
             }
         }
     }

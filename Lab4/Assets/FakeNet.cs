@@ -41,15 +41,12 @@ public class FakeNet : MonoBehaviour {
         {
             if (packets[i].GetTime() < currentTime)
             {
-                if (currentTime - lastPacketSendTime > 1000 / fps)
-                {
-                    int num = Random.Range(0, 101);
+                int num = Random.Range(0, 101);
 
-                    if (num > packetLoss)
-                    {
-                        network.Send(packets[i].GetMessage());
-                        lastPacketSendTime = currentTime;
-                    }
+                if (num > packetLoss)
+                {
+                    network.Send(packets[i].GetMessage());
+                    lastPacketSendTime = currentTime;
                 }
                 packets.RemoveAt(i);
             }
