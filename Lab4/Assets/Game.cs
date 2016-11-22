@@ -15,8 +15,7 @@ public class Game : MonoBehaviour {
     public bool localNet = false;
     public bool stateBased = false;
 
-    float lastPacketSentTimeRed = 0;
-    float lastPacketSentTimeBlue = 0;
+    float lastPacketSentTime = 0;
     float currentTime = 0;
 
     void Start ()
@@ -99,17 +98,11 @@ public class Game : MonoBehaviour {
         string positionY = firstPlayer.GetPosition().y.ToString();
 
         string combined = positionX + "," + positionY;
-        //fakeNetwork.Send(combined);
-        if (currentTime - lastPacketSentTimeRed > 1000 / 30)
+        if (currentTime - lastPacketSentTime > (1000.0f / 10.0f))
         {
             network.Send(combined);
-            lastPacketSentTimeRed = currentTime;
+            lastPacketSentTime = currentTime;
         }
-        else
-        {
-            firstPlayer.MoveByPosition(new Vector2(0, 0), false);
-        }
-        //network.Send(combined);
 
         string[] splitMessage;
         splitMessage = message.Split(',');
@@ -117,7 +110,9 @@ public class Game : MonoBehaviour {
         float newPosX = System.Single.Parse(splitMessage[0]);
         float newPosY = System.Single.Parse(splitMessage[1]);
 
+        //secondPlayer.MoveBy(new Vector2(newPosX, newPosY));
         secondPlayer.MoveByPosition(new Vector2(newPosX, newPosY));
+        secondPlayer.ManualUpdate();
     }
     void ProcessInput(Player player, string message)
     {

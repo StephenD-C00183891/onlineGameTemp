@@ -8,8 +8,8 @@ public class Player : MonoBehaviour {
     public KeyCode up, down, left, right;
     public bool remote;
 
-    public float max = 1.0f;
-    public float min = -1.0f;
+    public Vector2 max;
+    public Vector2 min;
 
     static float t = 0.0f;
 
@@ -34,25 +34,30 @@ public class Player : MonoBehaviour {
             rb.AddForce(new Vector2(5, 0));
         }
     }
-    public void MoveByPosition(Vector2 pos, bool recieved)
+    public void MoveBy(Vector2 pos)
     {
-        if (recieved == true)
+        rb.position = pos;
+    }
+    public void MoveByPosition(Vector2 pos)
+    {
+        min = rb.position;
+        max = pos;
+        t = 0.0f;
+    }
+    public void ManualUpdate()
+    {
+        const float FPS = (1000.0f / 10.0f);
+        t += Time.deltaTime;
+
+        if (t > FPS)
         {
-            rb.position = pos;
+            rb.position = new Vector2(max.x, max.y);
+            min = max;
         }
-        else if (recieved == false) 
+        else
         {
-            rb.position = new Vector2(Mathf.Lerp(min, max, t), 0);
-
-            t += 0.05f * Time.deltaTime;
-
-            if(t > 1.0f)
-            {
-                float temp = max;
-                max = min;
-                min = temp;
-                t = 0.0f;
-            }
+            float timeScaler = t / FPS;
+            rb.position = new Vector2(Mathf.Lerp(min.x, max.x, timeScaler), Mathf.Lerp(min.y, max.y, timeScaler));
         }
     }
     public Vector2 GetPosition()
