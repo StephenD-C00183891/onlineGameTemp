@@ -17,19 +17,24 @@ public class Game : MonoBehaviour {
 
     float lastPacketSentTime = 0;
     float currentTime = 0;
+    float timeSinceLastMsg = 0;
     const float FPS = (1000.0f / 10.0f) / 1000.0f;
 
     void Start ()
     {
         network = GetComponent<Net>();
-        //fakeNetwork = GetComponent<FakeNet>();
+        fakeNetwork = GetComponent<FakeNet>();
     }
     // Update is called once per frame
     void Update() {
 
         string message = Receive();
 
+        fakeNetwork.ProcessMessages();
+
         currentTime = Time.time;
+        timeSinceLastMsg += (Time.deltaTime * 1000);
+        //Debug.Log(timeSinceLastMsg);
 
         if (!stateBased)
         {
@@ -101,7 +106,7 @@ public class Game : MonoBehaviour {
         string combined = positionX + "," + positionY;
         if (currentTime - lastPacketSentTime > FPS)
         {
-            network.Send(combined);
+            fakeNetwork.Send(combined);
             lastPacketSentTime = currentTime;
         }
         //network.Send(combined);
@@ -113,8 +118,20 @@ public class Game : MonoBehaviour {
             float newPosX = float.Parse(splitMessage[0]);
             float newPosY = float.Parse(splitMessage[1]);
 
-            //secondPlayer.MoveBy(new Vector2(newPosX, newPosY));
-            secondPlayer.MoveByPosition(new Vector2(newPosX, newPosY));
+            if (timeSinceLastMsg <= 2000 )
+            {
+                Debug.Log("interpolate");
+                //secondPlayer.MoveBy(new Vector2(newPosX, newPosY));
+                secondPlayer.MoveByPosition(new Vector2(newPosX, newPosY));
+                timeSinceLastMsg = 0;
+            }
+            else if (timeSinceLastMsg > 2000)
+            {
+
+                secondPlayer.MoveBy(new Vector2(newPosX, newPosY));
+                timeSinceLastMsg = 0;
+                
+            }
         }
         secondPlayer.ManualUpdate(FPS);
 

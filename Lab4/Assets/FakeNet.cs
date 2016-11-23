@@ -21,7 +21,7 @@ public class FakeNet : MonoBehaviour {
         latency = 0;
         jitter = 0;
         fps = 30;
-        packetLoss = 0;
+        packetLoss = 30;
     }
     public void Send(string message)
     {
