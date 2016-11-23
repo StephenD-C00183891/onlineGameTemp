@@ -18,7 +18,7 @@ public class Game : MonoBehaviour {
     float lastPacketSentTime = 0;
     float currentTime = 0;
     float timeSinceLastMsg = 0;
-    const float FPS = (1000.0f / 10.0f) / 1000.0f;
+    const float FPS = (1000.0f / 30.0f) / 1000.0f;
 
     void Start ()
     {
@@ -127,7 +127,7 @@ public class Game : MonoBehaviour {
             }
             else if (timeSinceLastMsg > 2000)
             {
-
+                Debug.Log("snap");
                 secondPlayer.MoveBy(new Vector2(newPosX, newPosY));
                 timeSinceLastMsg = 0;
                 

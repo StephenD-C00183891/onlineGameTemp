@@ -9,7 +9,6 @@ public class FakeNet : MonoBehaviour {
     float packetLoss;
     float currentTime;
     float lastPacketSendTime;
-    int fps;
 
     Net network;
     List<Message> packets;
@@ -20,8 +19,7 @@ public class FakeNet : MonoBehaviour {
         packets = new List<Message>();
         latency = 0;
         jitter = 0;
-        fps = 30;
-        packetLoss = 30;
+        packetLoss = 0;
     }
     public void Send(string message)
     {
